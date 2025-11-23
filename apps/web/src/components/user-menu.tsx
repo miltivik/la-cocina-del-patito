@@ -38,6 +38,12 @@ export default function UserMenu() {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>{session.user.email}</DropdownMenuItem>
 				<DropdownMenuItem asChild>
+					<Link href="/settings" className="w-full cursor-pointer">
+						Settings
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem asChild>
 					<Button
 						variant="destructive"
 						className="w-full"

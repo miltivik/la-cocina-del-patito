@@ -1,0 +1,62 @@
+﻿bun : $ next build
+At line:1 char:1
++ bun run build > build.log 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($  
+   next build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErro 
+   r
+ 
+ ÔÜá Warning: Next.js inferred your workspace 
+root, but it may not be correct.
+ We detected multiple lockfiles and selected 
+the directory of 
+C:\Users\2025\package-lock.json as the root 
+directory.
+ To silence this warning, set `turbopack.root` 
+in your Next.js config, or consider removing 
+one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference
+/config/next-config-js/turbopack#root-directory 
+for more information.
+ Detected additional lockfiles: 
+   * C:\Users\2025\Desktop\miltivik\proyectos-pe
+rsonales\la-cocina-del-patito\bun.lock
+
+   Ôû▓ Next.js 16.0.0 (Turbopack)
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 3.4s
+   Running TypeScript ...
+Failed to compile.
+
+./src/app/ai/page.tsx:18:48
+Type error: Property 'useMutation' does not 
+exist on type 'ProcedureUtils<Record<never, 
+never>, any, { id: string; createdAt: Date; 
+updatedAt: Date; userId: string; title: string; 
+content: unknown; isPublic: boolean; } | 
+undefined, Error> & GeneralUtils<...>'.
+
+[0m [90m 16 |[39m 	[36mconst[39m 
+[messageToSave[33m,[39m setMessageToSave] 
+[33m=[39m useState[33m<[39m[33many[39m[33
+m>[39m([36mnull[39m)[33m;[39m
+ [90m 17 |[39m
+[31m[1m>[22m[39m[90m 18 |[39m 	
+[36mconst[39m saveMutation [33m=[39m orpc[3
+3m.[39msavedRecipes[33m.[39mcreate[33m.[39m
+useMutation({
+ [90m    |[39m 	                              
+                [31m[1m^[22m[39m
+ [90m 19 |[39m 		onSuccess[33m:[39m () 
+[33m=>[39m {
+ [90m 20 |[39m 			
+toast[33m.[39msuccess([32m"Recipe saved 
+successfully!"[39m)[33m;[39m
+ [90m 21 |[39m 			setSaveDialogOpen([36mfalse
+[39m)[33m;[39m[0m
+Next.js build worker exited with code: 1 and 
+signal: null
+error: script "build" exited with code 1

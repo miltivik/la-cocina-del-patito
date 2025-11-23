@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
-import Header from "@/components/header";
+import { NavigationDock } from "@/components/ui/demo";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,8 +30,8 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<Providers>
-					<div className="grid grid-rows-[auto_1fr] h-svh">
-						<Header />
+					<div className="grid grid-rows-[auto_1fr] min-h-screen">
+						<NavigationDock />
 						{children}
 					</div>
 				</Providers>

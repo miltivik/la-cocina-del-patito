@@ -26,7 +26,6 @@
     "@orpc/openapi": "catalog:",
     "@orpc/zod": "catalog:",
     "hono": "catalog:",
-    "drizzle-orm": "catalog:",
     "ai": "catalog:",
     "@ai-sdk/google": "catalog:",
     "dotenv": "catalog:",

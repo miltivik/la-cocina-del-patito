@@ -11,8 +11,6 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
@@ -131,5 +129,10 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #ffffff, #e8cfda);
+  }
+  .dark body {
+    background: #000000;
   }
 }

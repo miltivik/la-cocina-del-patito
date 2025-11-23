@@ -36,7 +36,10 @@
     "db:migrate": "turbo -F @la-cocina-del-patito/db db:migrate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.937.0",
+    "@aws-sdk/lib-storage": "^3.937.0",
     "dotenv": "^17.2.2",
+    "sharp": "^0.34.5",
     "zod": "^4.1.11"
   },
   "devDependencies": {

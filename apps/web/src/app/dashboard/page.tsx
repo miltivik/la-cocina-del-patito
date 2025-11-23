@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import Dashboard from "./dashboard";
 import { headers } from "next/headers";
 import { authClient } from "@/lib/auth-client";
+import { SavedRecipesList } from "@/components/saved-recipes-list";
 
 export default async function DashboardPage() {
 	const session = await authClient.getSession({
@@ -17,9 +17,19 @@ export default async function DashboardPage() {
 
 	return (
 		<div>
-			<h1>Dashboard</h1>
-			<p>Welcome {session.user.name}</p>
-			<Dashboard session={session} />
+			<div className="flex items-center justify-between mb-8">
+				<div>
+					<h1 className="text-3xl font-bold">Dashboard</h1>
+					<p className="text-muted-foreground">Welcome back, {session.user.name}</p>
+				</div>
+			</div>
+
+			<div className="space-y-8">
+				<section>
+					<h2 className="text-xl font-semibold mb-4">Your Saved Recipes</h2>
+					<SavedRecipesList />
+				</section>
+			</div>
 		</div>
 	);
 }
