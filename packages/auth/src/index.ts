@@ -1,7 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@la-cocina-del-patito/db";
-import * as schema from "@la-cocina-del-patito/db/schema/auth";
+import { db, schema } from "@la-cocina-del-patito/db";
 
 export const auth = betterAuth<BetterAuthOptions>({
 	database: drizzleAdapter(db, {

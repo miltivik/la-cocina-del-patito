@@ -5,5 +5,5 @@ export default defineConfig({
 	format: "esm",
 	outDir: "./dist",
 	clean: true,
-	noExternal: [/@la-cocina-del-patito\/.*/],
+	// noExternal: [/@la-cocina-del-patito\/.*/],
 });
