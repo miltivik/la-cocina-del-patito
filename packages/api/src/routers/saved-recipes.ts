@@ -8,6 +8,7 @@ export const savedRecipesRouter = {
             z.object({
                 title: z.string(),
                 content: z.any(), // Using any for JSON content, or could be specific schema
+                imageUrl: z.string().url().optional(),
             }),
         )
         .handler(async ({ input, context }) => {
@@ -17,6 +18,7 @@ export const savedRecipesRouter = {
                     userId: context.session.user.id,
                     title: input.title,
                     content: input.content,
+                    imageUrl: input.imageUrl || "https://images.unsplash.com/photo-1495521821757-a1efb0d6f87a?w=400&h=300&fit=crop",
                 })
                 .returning();
             return recipe;
@@ -35,6 +37,7 @@ export const savedRecipesRouter = {
             z.object({
                 id: z.string(),
                 title: z.string().optional(),
+                imageUrl: z.string().url().optional(),
                 isPublic: z.boolean().optional(),
             }),
         )
@@ -43,6 +46,7 @@ export const savedRecipesRouter = {
                 .update(savedRecipe)
                 .set({
                     ...(input.title ? { title: input.title } : {}),
+                    ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
                     ...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
                 })
                 .where(

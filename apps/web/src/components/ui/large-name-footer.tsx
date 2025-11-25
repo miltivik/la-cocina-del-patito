@@ -33,7 +33,7 @@ function Footer() {
             <h1 className="dark:text-gray-300 mt-4">
               Build by{" "}
               <span className="dark:text-[#039ee4]">
-                <Link href="https://x.com/arihantCodes">@miltivik</Link>
+                <Link href="https://x.com/miltivik">@miltivik</Link>
               </span>
             </h1>
 
