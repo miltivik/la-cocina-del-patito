@@ -1,6 +1,5 @@
 import { protectedProcedure } from "../index";
-import { db } from "@la-cocina-del-patito/db";
-import { user } from "@la-cocina-del-patito/db/schema/auth";
+import { db, user } from "@la-cocina-del-patito/db";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { uploadProfileImage, validateImage } from "../utils/s3";
