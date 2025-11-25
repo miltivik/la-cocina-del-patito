@@ -39,6 +39,10 @@ Primero desplegaremos el servidor, ya que el frontend necesita su URL para funci
     | `GOOGLE_GENERATIVE_AI_API_KEY` | Tu API Key de Gemini. |
     | `GOOGLE_CLIENT_ID` | Tu Google Client ID. |
     | `GOOGLE_CLIENT_SECRET` | Tu Google Client Secret. |
+    | `AWS_ACCESS_KEY_ID` | Tu Access Key ID de AWS (IAM User con permisos S3). |
+    | `AWS_SECRET_ACCESS_KEY` | Tu Secret Access Key de AWS. |
+    | `AWS_REGION` | La región de tu bucket (ej. `us-east-1`). |
+    | `AWS_S3_BUCKET_NAME` | El nombre de tu bucket S3. |
 
 5.  Haz clic en **"Deploy"**.
 
