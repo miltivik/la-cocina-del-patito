@@ -1,0 +1,1 @@
+ALTER TABLE "saved_recipe" ADD COLUMN "image_url" text;

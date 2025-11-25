@@ -8,6 +8,7 @@ export const savedRecipe = pgTable("saved_recipe", {
         .references(() => user.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     content: json("content").notNull(),
+    imageUrl: text("image_url"),
     isPublic: boolean("is_public").notNull().default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdate(() => new Date()),

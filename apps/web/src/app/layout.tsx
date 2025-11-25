@@ -30,8 +30,10 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<Providers>
-					<div className="grid grid-rows-[auto_1fr] min-h-screen">
-						<NavigationDock />
+					<div className="relative min-h-screen">
+						<div className="absolute top-0 left-0 w-full z-50">
+							<NavigationDock />
+						</div>
 						{children}
 					</div>
 				</Providers>

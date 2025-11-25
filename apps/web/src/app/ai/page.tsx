@@ -17,7 +17,7 @@ export default function AIPage() {
 	const [messageToSave, setMessageToSave] = useState<any>(null);
 
 	const saveMutation = useMutation({
-		mutationFn: async (data: { title: string; content: any; isPublic?: boolean }) => {
+		mutationFn: async (data: { title: string; content: any; isPublic?: boolean; imageUrl?: string }) => {
 			return await client.savedRecipes.create(data);
 		},
 		onSuccess: () => {
@@ -50,12 +50,13 @@ export default function AIPage() {
 		setSaveDialogOpen(true);
 	};
 
-	const handleSaveConfirm = (title: string, isPublic: boolean) => {
+	const handleSaveConfirm = (title: string, isPublic: boolean, imageUrl?: string) => {
 		if (messageToSave) {
 			saveMutation.mutate({
 				title,
 				content: messageToSave,
 				isPublic,
+				imageUrl,
 			});
 		}
 	};
@@ -158,4 +159,3 @@ export default function AIPage() {
 		</div>
 	);
 }
-
