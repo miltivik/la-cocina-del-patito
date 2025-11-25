@@ -451,7 +451,7 @@ function ProfileTab({ session }: { session: any }) {
                 <CardFooter className="flex justify-end border-t px-6 py-4">
                     <Button
                         onClick={handleUpdateProfile}
-                        disabled={isUpdating}
+                        isDisabled={isUpdating}
                     >
                         {isUpdating ? "Saving..." : "Save Changes"}
                     </Button>
@@ -599,14 +599,14 @@ function AccountTab({ session, handleSignOut }: { session: any; handleSignOut: (
                                         setShowDeleteModal(false);
                                         setDeleteConfirmation("");
                                     }}
-                                    disabled={isDeleting}
+                                    isDisabled={isDeleting}
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     variant="destructive"
                                     onClick={handleDeleteAccount}
-                                    disabled={isDeleting || deleteConfirmation !== "DELETE"}
+                                    isDisabled={isDeleting || deleteConfirmation !== "DELETE"}
                                 >
                                     {isDeleting ? "Deleting..." : "Delete Account"}
                                 </Button>

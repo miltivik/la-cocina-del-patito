@@ -1,4 +1,4 @@
-import { authClient } from "@/lib/auth-client";
+﻿import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -149,7 +149,7 @@ export function SignInForm({
 							<Button
 								type="submit"
 								className="w-full cursor-pointer"
-								disabled={!state.canSubmit || state.isSubmitting}
+								isDisabled={!state.canSubmit || state.isSubmitting}
 							>
 								{state.isSubmitting ? "Submitting..." : "Sign In"}
 							</Button>
@@ -173,7 +173,7 @@ export function SignInForm({
 						variant="outline"
 						className="w-full h-12 rounded-lg flex cursor-pointer items-center justify-center gap-3"
 						onClick={() => handleSocialSignIn("google")}
-						disabled={loadingProvider !== null}
+						isDisabled={loadingProvider !== null}
 					>
 						<Image
 							src="/svg/google.svg"
@@ -352,7 +352,7 @@ export function SignUpForm({
 							<Button
 								type="submit"
 								className="w-full cursor-pointer"
-								disabled={!state.canSubmit || state.isSubmitting}
+								isDisabled={!state.canSubmit || state.isSubmitting}
 							>
 								{state.isSubmitting ? "Submitting..." : "Sign Up"}
 							</Button>
@@ -376,7 +376,7 @@ export function SignUpForm({
 						variant="outline"
 						className="w-full h-12 rounded-lg cursor-pointer flex items-center justify-center gap-3"
 						onClick={() => handleSocialSignIn("google")}
-						disabled={loadingProvider !== null}
+						isDisabled={loadingProvider !== null}
 					>
 						<Image
 							src="/svg/google.svg"
