@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure } from "../index";
+import { protectedProcedure, publicProcedure } from "../procedures";
 import { db, savedRecipe, eq, and, desc } from "@la-cocina-del-patito/db";
 
 export const savedRecipesRouter = {
