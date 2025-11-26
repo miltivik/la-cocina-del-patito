@@ -1,15 +1,15 @@
- import { authClient } from "@/lib/auth-client";
- import { useForm } from "@tanstack/react-form";
- import { toast } from "sonner";
- import z from "zod";
- import Loader from "./loader";
- import { Button } from "./ui/button";
- import { Input } from "./ui/input";
- import { Label } from "./ui/label";
- import { useRouter } from "next/navigation";
- import { Eye, EyeOff } from "lucide-react";
- import { useState } from "react";
- import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
+import z from "zod";
+import Loader from "./loader";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
 
 export default function SignInForm({
 	onSwitchToSignUp,
@@ -149,7 +149,7 @@ export default function SignInForm({
 							<Button
 								type="submit"
 								className="w-full"
-								disabled={!state.canSubmit || state.isSubmitting}
+								isDisabled={!state.canSubmit || state.isSubmitting}
 							>
 								{state.isSubmitting ? "Submitting..." : "Sign In"}
 							</Button>
@@ -173,7 +173,7 @@ export default function SignInForm({
 						variant="outline"
 						className="w-full h-12 rounded-lg flex items-center justify-center gap-3"
 						onClick={() => handleSocialSignIn("google")}
-						disabled={loadingProvider !== null}
+						isDisabled={loadingProvider !== null}
 					>
 						<Image
 							src="/svg/google.svg"

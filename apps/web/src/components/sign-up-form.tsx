@@ -77,110 +77,110 @@ export default function SignUpForm({
 			<div className="w-full max-w-md">
 				<h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
 
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				className="space-y-4"
-			>
-				<div>
-					<form.Field name="name">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Name</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="email">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Email</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									type="email"
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="password">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Password</Label>
-								<div className="relative">
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						form.handleSubmit();
+					}}
+					className="space-y-4"
+				>
+					<div>
+						<form.Field name="name">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Name</Label>
 									<Input
 										id={field.name}
 										name={field.name}
-										type={showPassword ? "text" : "password"}
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="pr-10"
 									/>
-									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-										onClick={() => setShowPassword(!showPassword)}
-									>
-										{showPassword ? (
-											<EyeOff className="h-4 w-4" />
-										) : (
-											<Eye className="h-4 w-4" />
-										)}
-									</Button>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-red-500">
+											{error?.message}
+										</p>
+									))}
 								</div>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
+							)}
+						</form.Field>
+					</div>
 
-				<form.Subscribe>
-					{(state) => (
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={!state.canSubmit || state.isSubmitting}
-						>
-							{state.isSubmitting ? "Submitting..." : "Sign Up"}
-						</Button>
-					)}
-				</form.Subscribe>
-			</form>
+					<div>
+						<form.Field name="email">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Email</Label>
+									<Input
+										id={field.name}
+										name={field.name}
+										type="email"
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(e) => field.handleChange(e.target.value)}
+									/>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-red-500">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</div>
+
+					<div>
+						<form.Field name="password">
+							{(field) => (
+								<div className="space-y-2">
+									<Label htmlFor={field.name}>Password</Label>
+									<div className="relative">
+										<Input
+											id={field.name}
+											name={field.name}
+											type={showPassword ? "text" : "password"}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											className="pr-10"
+										/>
+										<Button
+											type="button"
+											variant="ghost"
+											size="sm"
+											className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+											onClick={() => setShowPassword(!showPassword)}
+										>
+											{showPassword ? (
+												<EyeOff className="h-4 w-4" />
+											) : (
+												<Eye className="h-4 w-4" />
+											)}
+										</Button>
+									</div>
+									{field.state.meta.errors.map((error) => (
+										<p key={error?.message} className="text-red-500">
+											{error?.message}
+										</p>
+									))}
+								</div>
+							)}
+						</form.Field>
+					</div>
+
+					<form.Subscribe>
+						{(state) => (
+							<Button
+								type="submit"
+								className="w-full"
+								isDisabled={!state.canSubmit || state.isSubmitting}
+							>
+								{state.isSubmitting ? "Submitting..." : "Sign Up"}
+							</Button>
+						)}
+					</form.Subscribe>
+				</form>
 
 				<div className="mt-4 text-center">
 					<Button
@@ -198,7 +198,7 @@ export default function SignUpForm({
 						variant="outline"
 						className="w-full h-12 rounded-lg flex items-center justify-center gap-3"
 						onClick={() => handleSocialSignIn("google")}
-						disabled={loadingProvider !== null}
+						isDisabled={loadingProvider !== null}
 					>
 						<Image
 							src="/svg/google.svg"

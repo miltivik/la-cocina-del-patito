@@ -1,4 +1,4 @@
-import { protectedProcedure } from "../index";
+import { protectedProcedure } from "../procedures";
 import { db, user } from "@la-cocina-del-patito/db";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
