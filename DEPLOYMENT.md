@@ -31,11 +31,11 @@ Primero desplegaremos el servidor, ya que el frontend necesita su URL para funci
 
     | Variable | Valor / Descripción |
     | :--- | :--- |
-    | `DATABASE_URL` | Tu cadena de conexión a Postgres (Supabase). |
+    | `DATABASE_URL` | Tu cadena de conexión a Postgres (Supabase). **IMPORTANTE**: Debe incluir `?sslmode=require` al final si usas Supabase. Ejemplo: `postgresql://user:pass@host:6543/postgres?pgbouncer=true&sslmode=require` |
     | `DIRECT_URL` | Cadena de conexión directa (para migraciones). |
     | `BETTER_AUTH_SECRET` | Una cadena larga y aleatoria (puedes generar una con `openssl rand -base64 32`). |
     | `BETTER_AUTH_URL` | `https://la-cocina-server.vercel.app` (La URL que Vercel te dará. Pon una temporal si no la sabes aún, luego la actualizas). |
-    | `CORS_ORIGIN` | `*` (Temporalmente para probar, luego pon la URL de tu frontend). |
+    | `CORS_ORIGIN` | La URL de tu frontend (ej. `https://la-cocina-web.vercel.app`). **Sin barra al final**. |
     | `GOOGLE_GENERATIVE_AI_API_KEY` | Tu API Key de Gemini. |
     | `GOOGLE_CLIENT_ID` | Tu Google Client ID. |
     | `GOOGLE_CLIENT_SECRET` | Tu Google Client Secret. |
@@ -43,6 +43,8 @@ Primero desplegaremos el servidor, ya que el frontend necesita su URL para funci
     | `AWS_SECRET_ACCESS_KEY` | Tu Secret Access Key de AWS. |
     | `AWS_REGION` | La región de tu bucket (ej. `us-east-1`). |
     | `AWS_S3_BUCKET_NAME` | El nombre de tu bucket S3. |
+
+    > ⚠️ **Nota sobre SSL**: El código ya está configurado para manejar certificados SSL de Supabase automáticamente en producción. Si ves errores de "self-signed certificate", asegúrate de que las variables `VERCEL` o `VERCEL_ENV` estén presentes (Vercel las inyecta automáticamente).
 
 5.  Haz clic en **"Deploy"**.
 
@@ -98,3 +100,42 @@ Ahora que ambos están desplegados, necesitamos "presentarlos" formalmente y ase
 4.  Prueba el chat con el chef para verificar que la conexión con el backend y la IA funciona.
 
 ¡Listo! Tu aplicación está en producción. 🚀
+
+
+---
+
+## 🔧 Troubleshooting
+
+### Error: "self-signed certificate in certificate chain"
+
+Este error ocurre cuando la conexión a PostgreSQL (Supabase) no puede verificar el certificado SSL. **Soluciones**:
+
+1. **Verificar que el código esté actualizado**: El archivo `packages/db/src/index.ts` debe detectar correctamente el entorno de producción usando las variables `VERCEL`, `VERCEL_ENV` o `NODE_ENV`.
+
+2. **Verificar variables de entorno en Vercel**:
+   - Asegúrate de que `DATABASE_URL` esté correctamente configurada
+   - Vercel inyecta automáticamente `VERCEL=1` y `VERCEL_ENV` - no necesitas configurarlas manualmente
+
+3. **Forzar SSL en la URL de conexión** (alternativa):
+   ```
+   DATABASE_URL=postgresql://user:pass@host:6543/postgres?pgbouncer=true&sslmode=require
+   ```
+
+### Error: "CORS blocked" o problemas de cookies
+
+1. Verifica que `CORS_ORIGIN` en el backend coincida exactamente con la URL del frontend (sin barra final)
+2. Asegúrate de que `BETTER_AUTH_URL` sea la URL del backend
+
+### Error: "OAuth callback failed"
+
+1. Verifica en Google Cloud Console que las URIs de redirección incluyan:
+   - `https://tu-backend.vercel.app/api/auth/callback/google`
+2. Asegúrate de que `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` estén correctamente configurados
+
+### Logs de debugging
+
+El servidor imprime logs de configuración al iniciar. Revisa los logs en Vercel para ver:
+- `🔍 DB Configuration:` - Muestra la configuración de la base de datos
+- `🔐 Auth Configuration:` - Muestra la configuración de autenticación
+
+Si `isProduction` es `false` cuando debería ser `true`, hay un problema con la detección del entorno.
