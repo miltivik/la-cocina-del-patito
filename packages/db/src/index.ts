@@ -24,9 +24,10 @@ const isLocalDatabase =
 	databaseUrl.includes("127.0.0.1") ||
 	databaseUrl === "";
 
-// SIEMPRE usar SSL para conexiones remotas (no locales)
-// Esto es más seguro y simple que detectar el entorno
-const shouldUseSSL = !isLocalDatabase;
+// Remover cualquier parámetro sslmode de la URL para evitar conflictos
+// Según la documentación de node-postgres, los parámetros SSL en la URL
+// sobrescriben el objeto ssl que pasamos al Pool
+const cleanDatabaseUrl = databaseUrl.replace(/[?&]sslmode=[^&]*/g, "").replace(/\?$/, "");
 
 // Log de configuración para debugging
 console.log("🔍 DB Configuration:", {
@@ -34,22 +35,20 @@ console.log("🔍 DB Configuration:", {
 	vercelEnv: process.env.VERCEL_ENV,
 	vercel: process.env.VERCEL,
 	isLocalDatabase,
-	shouldUseSSL,
 	hasDatabase: !!databaseUrl,
 	databaseHost: databaseUrl?.split("@")[1]?.split("/")[0] || "unknown",
+	sslEnabled: !isLocalDatabase,
 });
 
 // Create a Pool with SSL configuration
-// Para cualquier conexión remota (no localhost), usar SSL con rejectUnauthorized: false
-// Esto es necesario porque servicios como Supabase usan certificados que pueden
-// no estar en la cadena de confianza del runtime de Node.js en Vercel
+// Según la documentación de node-postgres:
+// - Para conexiones con certificados auto-firmados, usar ssl: { rejectUnauthorized: false }
+// - NO incluir sslmode en la URL porque sobrescribe el objeto ssl
 const pool = new Pool({
-	connectionString: databaseUrl,
-	ssl: shouldUseSSL
-		? {
-				rejectUnauthorized: false,
-			}
-		: false,
+	connectionString: cleanDatabaseUrl,
+	// SSL configuration for cloud providers (Supabase, etc.)
+	// rejectUnauthorized: false es necesario para certificados auto-firmados
+	ssl: isLocalDatabase ? false : { rejectUnauthorized: false },
 });
 
 export const db = drizzle(pool, { schema });
