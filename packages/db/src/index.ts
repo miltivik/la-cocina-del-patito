@@ -15,39 +15,34 @@ import * as savedRecipesSchema from "./schema/saved-recipes";
 
 export const schema = { ...authSchema, ...savedRecipesSchema };
 
-// Detectar si estamos en producción de múltiples formas
-const isVercel = process.env.VERCEL === "1" || !!process.env.VERCEL_ENV;
-const isProductionEnv = process.env.NODE_ENV === "production";
-
-// Detectar si la DATABASE_URL apunta a un servicio de producción (Supabase, Neon, etc.)
+// Obtener la URL de la base de datos
 const databaseUrl = process.env.DATABASE_URL || "";
-const isProductionDatabase =
-	databaseUrl.includes("supabase.com") ||
-	databaseUrl.includes("pooler.supabase.com") ||
-	databaseUrl.includes("neon.tech") ||
-	databaseUrl.includes("railway.app") ||
-	databaseUrl.includes("render.com");
 
-// Usar SSL si estamos en Vercel, en producción, o conectando a una DB de producción
-const shouldUseSSL = isVercel || isProductionEnv || isProductionDatabase;
+// Detectar si es una conexión local (localhost, 127.0.0.1, o sin host)
+const isLocalDatabase =
+	databaseUrl.includes("localhost") ||
+	databaseUrl.includes("127.0.0.1") ||
+	databaseUrl === "";
+
+// SIEMPRE usar SSL para conexiones remotas (no locales)
+// Esto es más seguro y simple que detectar el entorno
+const shouldUseSSL = !isLocalDatabase;
 
 // Log de configuración para debugging
 console.log("🔍 DB Configuration:", {
 	env: process.env.NODE_ENV,
 	vercelEnv: process.env.VERCEL_ENV,
 	vercel: process.env.VERCEL,
-	isVercel,
-	isProductionEnv,
-	isProductionDatabase,
+	isLocalDatabase,
 	shouldUseSSL,
 	hasDatabase: !!databaseUrl,
 	databaseHost: databaseUrl?.split("@")[1]?.split("/")[0] || "unknown",
 });
 
 // Create a Pool with SSL configuration
-// Para servicios como Supabase, Neon, Railway, etc., siempre necesitamos SSL
-// con rejectUnauthorized: false porque sus certificados pueden no estar
-// en la cadena de confianza del runtime de Node.js
+// Para cualquier conexión remota (no localhost), usar SSL con rejectUnauthorized: false
+// Esto es necesario porque servicios como Supabase usan certificados que pueden
+// no estar en la cadena de confianza del runtime de Node.js en Vercel
 const pool = new Pool({
 	connectionString: databaseUrl,
 	ssl: shouldUseSSL
