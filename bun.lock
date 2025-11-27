@@ -99,6 +99,7 @@
         "@orpc/zod": "catalog:",
         "ai": "catalog:",
         "dotenv": "catalog:",
+        "drizzle-orm": "catalog:",
         "hono": "catalog:",
         "zod": "catalog:",
       },
