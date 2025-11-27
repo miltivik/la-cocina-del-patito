@@ -5,19 +5,19 @@ dotenv.config({
 });
 
 import { drizzle } from "drizzle-orm/node-postgres";
-import pkg from "pg";
-const { Pool } = pkg;
+import { Pool } from "pg";
 import * as authSchema from "./schema/auth";
 import * as savedRecipesSchema from "./schema/saved-recipes";
 
 export const schema = { ...authSchema, ...savedRecipesSchema };
 
 // Create a Pool with SSL configuration for Supabase
+// This configuration is required for Vercel serverless functions
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL || "",
-	ssl: {
-		rejectUnauthorized: false,
-	},
+	ssl: process.env.NODE_ENV === "production"
+		? { rejectUnauthorized: false }
+		: false,
 });
 
 export const db = drizzle(pool, { schema });
