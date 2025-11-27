@@ -5,11 +5,22 @@ dotenv.config({
 });
 
 import { drizzle } from "drizzle-orm/node-postgres";
+import pkg from "pg";
+const { Pool } = pkg;
 import * as authSchema from "./schema/auth";
 import * as savedRecipesSchema from "./schema/saved-recipes";
 
 export const schema = { ...authSchema, ...savedRecipesSchema };
-export const db = drizzle(process.env.DATABASE_URL || "", { schema });
+
+// Create a Pool with SSL configuration for Supabase
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL || "",
+	ssl: {
+		rejectUnauthorized: false,
+	},
+});
+
+export const db = drizzle(pool, { schema });
 
 export * from "./schema/auth";
 export * from "./schema/saved-recipes";
