@@ -117,15 +117,23 @@ app.use(
 	cors({
 		origin: (origin) => {
 			const allowedOrigin = process.env.CORS_ORIGIN || "";
+
+			// Allow requests without origin (like same-origin requests or favicon)
+			if (!origin) {
+				return allowedOrigin || "*";
+			}
+
 			// Allow requests from the defined origin (handling potential trailing slashes)
 			if (origin === allowedOrigin || origin === allowedOrigin.replace(/\/$/, "")) {
 				return origin;
 			}
+
 			// Useful for local development or if env var is missing
 			if (!allowedOrigin) {
 				console.warn("CORS_ORIGIN not set, allowing all origins (NOT RECOMMENDED FOR PRODUCTION)");
 				return origin;
 			}
+
 			console.warn(`Blocked CORS request from origin: ${origin}. Expected: ${allowedOrigin}`);
 			return allowedOrigin; // Return expected origin to fail the check gracefully or let browser block it
 		},
