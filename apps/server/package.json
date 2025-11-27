@@ -10,18 +10,19 @@
     "start": "bun run dist/index.js"
   },
   "dependencies": {
-    "hono": "catalog:",
-    "@orpc/server": "catalog:",
-    "@orpc/openapi": "catalog:",
-    "@orpc/zod": "catalog:",
-    "better-auth": "catalog:",
-    "ai": "catalog:",
     "@ai-sdk/google": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:",
     "@la-cocina-del-patito/api": "workspace:*",
     "@la-cocina-del-patito/auth": "workspace:*",
-    "@la-cocina-del-patito/db": "workspace:*"
+    "@la-cocina-del-patito/db": "workspace:*",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/zod": "catalog:",
+    "ai": "catalog:",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "hono": "catalog:",
+    "pg": "^8.16.3",
+    "zod": "catalog:"
   },
   "trustedDependencies": [
     "supabase"
