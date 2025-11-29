@@ -10,11 +10,15 @@ const isProduction =
 	process.env.NODE_ENV === "production";
 
 // URL base del servidor (para callbacks de OAuth)
-const baseURL = process.env.BETTER_AUTH_URL
-	? process.env.BETTER_AUTH_URL
-	: process.env.VERCEL_URL
+// URL base del servidor (para callbacks de OAuth)
+const baseURL =
+	process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
 		? `https://${process.env.VERCEL_URL}`
-		: "http://localhost:3001";
+		: process.env.BETTER_AUTH_URL
+			? process.env.BETTER_AUTH_URL
+			: process.env.VERCEL_URL
+				? `https://${process.env.VERCEL_URL}`
+				: "http://localhost:3001";
 
 console.log("🔐 Auth Configuration:", {
 	isProduction,
