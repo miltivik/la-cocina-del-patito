@@ -128,6 +128,11 @@ app.use(
 				return origin;
 			}
 
+			// Allow Vercel preview deployments
+			if (origin.endsWith(".vercel.app")) {
+				return origin;
+			}
+
 			// Useful for local development or if env var is missing
 			if (!allowedOrigin) {
 				console.warn("CORS_ORIGIN not set, allowing all origins (NOT RECOMMENDED FOR PRODUCTION)");
