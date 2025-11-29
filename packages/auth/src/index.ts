@@ -33,6 +33,8 @@ export const auth = betterAuth<BetterAuthOptions>({
 		process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/\/$/, "") : "",
 		// También agregar la URL del frontend en producción
 		"https://la-cocina-del-patito-web.vercel.app",
+		// Permitir la URL de Vercel actual (para previews)
+		process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
 	].filter(Boolean),
 	emailAndPassword: {
 		enabled: true,
