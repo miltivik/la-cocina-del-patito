@@ -137,7 +137,7 @@ Este error ocurre cuando la conexión a PostgreSQL (Supabase) no puede verificar
 Este error ocurre cuando la cookie de estado OAuth no se puede leer durante el callback. **Causas comunes**:
 
 1. **Falta `BETTER_AUTH_SECRET`**: Esta variable es **obligatoria** para firmar las cookies. Sin ella, las cookies no se pueden validar.
-   - Genera una con: `openssl rand -base64 32`
+   - Genera una con: `openssl rand -base64 32` (o en Windows: `powershell -Command "[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 }))"`)
    - Agrégala en Vercel: Settings -> Environment Variables
 
 2. **Mismatch de dominios**: El `BETTER_AUTH_URL` debe coincidir exactamente con la URL del backend.
@@ -146,6 +146,7 @@ Este error ocurre cuando la cookie de estado OAuth no se puede leer durante el c
 
 3. **Cookies bloqueadas por el navegador**: Safari y algunos navegadores bloquean cookies de terceros.
    - La configuración actual usa `crossSubDomainCookies` para manejar esto en `.vercel.app`
+   - En desarrollo local, usa `sameSite: "lax"` para evitar problemas
 
 4. **Google Cloud Console mal configurado**:
    - En "Authorized redirect URIs" debe estar exactamente: `https://tu-backend.vercel.app/api/auth/callback/google`
@@ -153,8 +154,78 @@ Este error ocurre cuando la cookie de estado OAuth no se puede leer durante el c
 
 5. **Verificar cookies en DevTools**:
    - Abre DevTools → Application → Cookies
-   - Antes de iniciar OAuth, verifica que se cree una cookie `better-auth.state`
-   - Después del callback, verifica que la cookie siga existiendo
+   - Busca cookies con nombres como `better-auth.state`, `better-auth.session`, etc.
+   - Si no aparecen cookies, verifica:
+     - Que `BETTER_AUTH_SECRET` esté configurado
+     - Que el navegador no esté bloqueando cookies de terceros
+     - Que estés en HTTPS en producción
+
+6. **Configuración de CORS incorrecta**:
+   - Verifica que `CORS_ORIGIN` en el backend coincida con la URL del frontend
+   - Verifica que `trustedOrigins` incluya la URL del frontend
+
+## Diagnóstico paso a paso:
+
+1. **Verifica las variables de entorno en Vercel**:
+   - `BETTER_AUTH_SECRET`: Debe existir y tener ~44 caracteres
+   - `BETTER_AUTH_URL`: Debe ser la URL exacta del backend
+   - `CORS_ORIGIN`: Debe ser la URL del frontend sin barra final
+
+2. **Revisa los logs del servidor**:
+   - Busca: `🔐 Auth Configuration:`
+   - Verifica que `hasBetterAuthSecret: true`
+   - Verifica que `baseURL` sea correcto
+
+3. **Prueba en desarrollo local**:
+   - Asegúrate de que `NEXT_PUBLIC_SERVER_URL` apunte al servidor local
+   - Verifica que no haya problemas de CORS
+
+4. **Limpia cookies y cache**:
+   - Borra todas las cookies relacionadas con tu dominio
+   - Hard refresh (Ctrl+F5) en el navegador
+
+## Herramientas de diagnóstico incluidas:
+
+### 1. Función `debugAuth()` en el navegador:
+En desarrollo, abre la consola del navegador y ejecuta:
+```javascript
+debugAuth()
+```
+Esto mostrará información detallada sobre la configuración y cookies actuales.
+
+### 2. Componente DebugAuth (temporal):
+Para debugging visual, agrega temporalmente el componente `DebugAuth` a tu layout:
+
+```tsx
+// En apps/web/src/app/layout.tsx
+import DebugAuth from "@/components/debug-auth";
+
+// Dentro del componente Layout:
+<DebugAuth />
+```
+
+Esto mostrará un panel flotante en la esquina inferior derecha con un botón para loggear información de debug.
+
+### 2. Logs del servidor:
+Revisa los logs de Vercel para ver la configuración de autenticación:
+```
+🔐 Auth Configuration: {
+  hasBetterAuthSecret: true,
+  baseURL: "https://tu-backend.vercel.app",
+  // ... más info
+}
+```
+
+### 3. Verificar cookies en DevTools:
+- Application → Cookies → Tu dominio
+- Busca cookies que empiecen con `better-auth.`
+- Deberías ver al menos: `better-auth.session`, `better-auth.state` (durante OAuth)
+
+### 4. Probar OAuth flow:
+1. Limpia todas las cookies
+2. Intenta iniciar sesión con Google
+3. Verifica que se cree la cookie `better-auth.state` antes del redirect
+4. Verifica que la cookie persista después del callback
 
 ### Logs de debugging
 

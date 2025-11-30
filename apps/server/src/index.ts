@@ -29,7 +29,7 @@ Una vez tengas esta información, entrega una receta adaptada con pasos claros, 
 
 Ejemplos de salida esperada
 
-1. 
+1.
 
 Usuario: Tengo pollo y arroz, para 3 personas, quiero salado y dispongo de 45 minutos.
 Chef: ¿Qué otros ingredientes tienes? ¿Verduras, salsas?
@@ -60,7 +60,7 @@ Tiempo total aproximado: 40 minutos.
 
 ***
 
-2. 
+2.
 
 Usuario: Quiero un postre dulce para 2 personas con fresas y chocolate, tengo 20 minutos.
 Chef: ¿Tienes crema, leche o azúcar?
@@ -84,7 +84,7 @@ Tiempo total aproximado: 15 minutos.
 
 ***
 
-3. 
+3.
 
 Usuario: Plato agridulce para 4 personas, sin muchas verduras, 1 hora para cocinar.
 Chef: ¿Tienes pollo, cerdo o pescado? ¿Qué frutas o especias?
@@ -112,39 +112,38 @@ Pasos:
 Tiempo total aproximado: 50 minutos.`;
 
 app.use(logger());
+
+// Configuración CORS simplificada para compatibilidad con Better Auth
+const corsOrigins = [
+	process.env.CORS_ORIGIN?.replace(/\/$/, ""), // Frontend URL sin barra final
+	"https://la-cocina-del-patito-web.vercel.app", // URL de producción
+	process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "", // URL actual de Vercel
+].filter(Boolean);
+
 app.use(
 	"/*",
 	cors({
 		origin: (origin) => {
-			const allowedOrigin = process.env.CORS_ORIGIN || "";
+			// Allow requests without origin (same-origin, server-side, etc.)
+			if (!origin) return true;
 
-			// Allow requests without origin (like same-origin requests or favicon)
-			if (!origin) {
-				return allowedOrigin || "*";
-			}
+			// Allow all Vercel domains for flexibility
+			if (origin.endsWith(".vercel.app")) return true;
 
-			// Allow requests from the defined origin (handling potential trailing slashes)
-			if (origin === allowedOrigin || origin === allowedOrigin.replace(/\/$/, "")) {
-				return origin;
-			}
+			// Check against allowed origins
+			const isAllowed = corsOrigins.some(allowed =>
+				allowed && (origin === allowed || origin === allowed.replace(/\/$/, ""))
+			);
 
-			// Allow Vercel preview deployments
-			if (origin.endsWith(".vercel.app")) {
-				return origin;
-			}
+			if (isAllowed) return true;
 
-			// Useful for local development or if env var is missing
-			if (!allowedOrigin) {
-				console.warn("CORS_ORIGIN not set, allowing all origins (NOT RECOMMENDED FOR PRODUCTION)");
-				return origin;
-			}
-
-			console.warn(`Blocked CORS request from origin: ${origin}. Expected: ${allowedOrigin}`);
-			return allowedOrigin; // Return expected origin to fail the check gracefully or let browser block it
+			console.warn(`CORS blocked: ${origin}. Allowed: ${corsOrigins.join(", ")}`);
+			return false;
 		},
-		allowMethods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-		allowHeaders: ["Content-Type", "Authorization"],
+		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 		credentials: true,
+		exposeHeaders: ["Set-Cookie"],
 	}),
 );
 

@@ -29,6 +29,9 @@ console.log("🔐 Auth Configuration:", {
 	corsOrigin: process.env.CORS_ORIGIN,
 	hasGoogleCredentials: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
 	hasBetterAuthSecret: !!process.env.BETTER_AUTH_SECRET,
+	secretLength: process.env.BETTER_AUTH_SECRET?.length,
+	vercelEnv: process.env.VERCEL_ENV,
+	vercelUrl: process.env.VERCEL_URL,
 });
 
 export const auth = betterAuth<BetterAuthOptions>({
@@ -59,19 +62,35 @@ export const auth = betterAuth<BetterAuthOptions>({
 		},
 	},
 	advanced: {
-		// Usar crossSubDomainCookies para manejar cookies entre dominios
-		crossSubDomainCookies: {
-			enabled: isProduction,
-			domain: isProduction ? ".vercel.app" : undefined,
-		},
+		// Configuración específica para desarrollo local
+		crossSubDomainCookies: isProduction ? {
+			enabled: true,
+			domain: ".vercel.app",
+		} : undefined,
+		// Forzar cookies seguras en producción
+		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// En producción con cross-origin, usar "none" con secure
-			// En desarrollo, usar "lax" para evitar problemas
+			// Configuración más permisiva para desarrollo
 			sameSite: isProduction ? "none" : "lax",
 			secure: isProduction,
 			httpOnly: true,
-			// Establecer path explícito
 			path: "/",
+			maxAge: 60 * 60 * 24 * 7, // 7 días
+		},
+		// Solo deshabilitar CSRF en desarrollo para simplificar testing
+		disableCSRFCheck: !isProduction,
+	},
+	// Configuración de cuentas para producción
+	account: {
+		// Encriptar tokens OAuth para mayor seguridad
+		encryptOAuthTokens: true,
+		// Almacenar datos de cuenta en cookies para flujos sin base de datos
+		storeAccountCookie: true,
+		// Habilitar linking de cuentas entre proveedores
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ["google", "email-password"],
+			allowDifferentEmails: false,
 		},
 	},
 });
