@@ -33,8 +33,8 @@ Primero desplegaremos el servidor, ya que el frontend necesita su URL para funci
     | :--- | :--- |
     | `DATABASE_URL` | Tu cadena de conexión a Postgres (Supabase). **IMPORTANTE**: Debe incluir `?sslmode=require` al final si usas Supabase. Ejemplo: `postgresql://user:pass@host:6543/postgres?pgbouncer=true&sslmode=require` |
     | `DIRECT_URL` | Cadena de conexión directa (para migraciones). |
-    | `BETTER_AUTH_SECRET` | Una cadena larga y aleatoria (puedes generar una con `openssl rand -base64 32`). |
-    | `BETTER_AUTH_URL` | `https://la-cocina-server.vercel.app` (La URL que Vercel te dará. Pon una temporal si no la sabes aún, luego la actualizas). |
+    | `BETTER_AUTH_SECRET` | **CRÍTICO**: Una cadena larga y aleatoria (puedes generar una con `openssl rand -base64 32`). Esta variable es **obligatoria** para firmar las cookies de sesión y estado OAuth. Sin ella, obtendrás errores `state_mismatch`. |
+    | `BETTER_AUTH_URL` | `https://la-cocina-server.vercel.app` (La URL que Vercel te dará. Pon una temporal si no la sabes aún, luego la actualizas). **Debe coincidir exactamente con la URL del backend**. |
     | `CORS_ORIGIN` | La URL de tu frontend (ej. `https://la-cocina-web.vercel.app`). **Sin barra al final**. |
     | `GOOGLE_GENERATIVE_AI_API_KEY` | Tu API Key de Gemini. |
     | `GOOGLE_CLIENT_ID` | Tu Google Client ID. |
@@ -131,6 +131,30 @@ Este error ocurre cuando la conexión a PostgreSQL (Supabase) no puede verificar
 1. Verifica en Google Cloud Console que las URIs de redirección incluyan:
    - `https://tu-backend.vercel.app/api/auth/callback/google`
 2. Asegúrate de que `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` estén correctamente configurados
+
+### Error: "state_mismatch" en OAuth
+
+Este error ocurre cuando la cookie de estado OAuth no se puede leer durante el callback. **Causas comunes**:
+
+1. **Falta `BETTER_AUTH_SECRET`**: Esta variable es **obligatoria** para firmar las cookies. Sin ella, las cookies no se pueden validar.
+   - Genera una con: `openssl rand -base64 32`
+   - Agrégala en Vercel: Settings -> Environment Variables
+
+2. **Mismatch de dominios**: El `BETTER_AUTH_URL` debe coincidir exactamente con la URL del backend.
+   - Verifica que no haya barras finales (`/`) de más
+   - Verifica que el protocolo sea `https://`
+
+3. **Cookies bloqueadas por el navegador**: Safari y algunos navegadores bloquean cookies de terceros.
+   - La configuración actual usa `crossSubDomainCookies` para manejar esto en `.vercel.app`
+
+4. **Google Cloud Console mal configurado**:
+   - En "Authorized redirect URIs" debe estar exactamente: `https://tu-backend.vercel.app/api/auth/callback/google`
+   - En "Authorized JavaScript origins" deben estar tanto el frontend como el backend
+
+5. **Verificar cookies en DevTools**:
+   - Abre DevTools → Application → Cookies
+   - Antes de iniciar OAuth, verifica que se cree una cookie `better-auth.state`
+   - Después del callback, verifica que la cookie siga existiendo
 
 ### Logs de debugging
 
