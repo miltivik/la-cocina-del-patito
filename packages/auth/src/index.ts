@@ -62,16 +62,10 @@ export const auth = betterAuth<BetterAuthOptions>({
 		},
 	},
 	advanced: {
-		// Configuración específica para desarrollo local
-		crossSubDomainCookies: isProduction ? {
-			enabled: true,
-			domain: ".vercel.app",
-		} : undefined,
-		// Forzar cookies seguras en producción
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// Configuración más permisiva para desarrollo
-			sameSite: isProduction ? "none" : "lax",
+			// sameSite "lax" funciona para OAuth redirects (navegación top-level)
+			sameSite: "lax",
 			secure: isProduction,
 			httpOnly: true,
 			path: "/",
