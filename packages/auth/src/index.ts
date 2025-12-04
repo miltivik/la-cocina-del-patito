@@ -84,8 +84,6 @@ export const auth = betterAuth<BetterAuthOptions>({
 	account: {
 		// Encriptar tokens OAuth para mayor seguridad
 		encryptOAuthTokens: true,
-		// Almacenar datos de cuenta en cookies para flujos sin base de datos
-		storeAccountCookie: true,
 		// Habilitar linking de cuentas entre proveedores
 		accountLinking: {
 			enabled: true,
