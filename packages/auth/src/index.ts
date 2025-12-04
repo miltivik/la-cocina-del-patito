@@ -10,14 +10,9 @@ const isProduction =
 	process.env.NODE_ENV === "production";
 
 // URL base del servidor (para callbacks de OAuth)
-const baseURL =
-	process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
-		? `https://${process.env.VERCEL_URL}`
-		: process.env.BETTER_AUTH_URL
-			? process.env.BETTER_AUTH_URL
-			: process.env.VERCEL_URL
-				? `https://${process.env.VERCEL_URL}`
-				: "http://localhost:3001";
+// IMPORTANTE: En producción SIEMPRE usar BETTER_AUTH_URL (alias estable)
+// para evitar state_mismatch por inconsistencia de dominios de cookies
+const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3001";
 
 // URL del frontend para redirecciones
 const frontendURL = process.env.CORS_ORIGIN?.replace(/\/$/, "") || "http://localhost:3000";
@@ -43,11 +38,9 @@ export const auth = betterAuth<BetterAuthOptions>({
 	}),
 	trustedOrigins: [
 		frontendURL,
-		// También agregar la URL del frontend en producción
+		// URL del frontend en producción
 		"https://la-cocina-del-patito-web.vercel.app",
-		// Permitir la URL de Vercel actual (para previews)
-		process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
-		// Permitir el baseURL del servidor
+		// URL del servidor (baseURL)
 		baseURL,
 	].filter(Boolean),
 	emailAndPassword: {
