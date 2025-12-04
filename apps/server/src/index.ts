@@ -120,25 +120,36 @@ const corsOrigins = [
 	process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "", // URL actual de Vercel
 ].filter(Boolean);
 
+console.log("🔒 CORS Origins configurados:", corsOrigins);
+
 app.use(
 	"/*",
 	cors({
 		origin: (origin) => {
 			// Allow requests without origin (same-origin, server-side, etc.)
-			if (!origin) return true;
+			if (!origin) {
+				console.log("🔒 CORS: Sin origin, permitido");
+				return origin || "*"; // Permitir cualquier origen si no hay origin
+			}
 
 			// Allow all Vercel domains for flexibility
-			if (origin.endsWith(".vercel.app")) return true;
+			if (origin.endsWith(".vercel.app")) {
+				console.log(`🔒 CORS: Origen Vercel permitido: ${origin}`);
+				return origin; // Retornar la URL específica
+			}
 
 			// Check against allowed origins
 			const isAllowed = corsOrigins.some(allowed =>
 				allowed && (origin === allowed || origin === allowed.replace(/\/$/, ""))
 			);
 
-			if (isAllowed) return true;
+			if (isAllowed) {
+				console.log(`🔒 CORS: Origen permitido: ${origin}`);
+				return origin; // Retornar la URL específica
+			}
 
-			console.warn(`CORS blocked: ${origin}. Allowed: ${corsOrigins.join(", ")}`);
-			return false;
+			console.warn(`🚫 CORS bloqueado: ${origin}. Permitidos: ${corsOrigins.join(", ")}`);
+			return null; // Rechazar la solicitud
 		},
 		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
