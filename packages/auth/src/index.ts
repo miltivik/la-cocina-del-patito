@@ -64,9 +64,9 @@ export const auth = betterAuth<BetterAuthOptions>({
 	advanced: {
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// sameSite "lax" funciona para OAuth redirects (navegación top-level)
-			sameSite: "lax",
-			secure: isProduction,
+			// sameSite "none" es necesario para cross-domain cookies en Vercel
+			sameSite: isProduction ? "none" : "lax",
+			secure: isProduction, // secure: true es requerido si sameSite es none
 			httpOnly: true,
 			path: "/",
 			maxAge: 60 * 60 * 24 * 7, // 7 días
