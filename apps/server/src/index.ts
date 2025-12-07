@@ -12,7 +12,11 @@ import { logger } from "hono/logger";
 import { streamText, convertToModelMessages } from "ai";
 import { google } from "@ai-sdk/google";
 
-const app = new Hono();
+type Variables = {
+	user: typeof auth.$Infer.Session.user | null;
+};
+
+const app = new Hono<{ Variables: Variables }>();
 
 const CHEF_SYSTEM_PROMPT = `Eres un chef profesional privado con 3 estrellas Michelin. Respondes siempre con brevedad, precisión y sin divagar. Tu rol es guiar al usuario para preparar la mejor receta posible según sus condiciones.
 
@@ -184,6 +188,11 @@ export const rpcHandler = new RPCHandler(appRouter, {
 app.use("/*", async (c, next) => {
 	const context = await createContext({ context: c });
 
+	// Store user in context for downstream handlers
+	if (context.session?.user) {
+		c.set("user", context.session.user);
+	}
+
 	const rpcResult = await rpcHandler.handle(c.req.raw, {
 		prefix: "/rpc",
 		context: context,
@@ -206,6 +215,12 @@ app.use("/*", async (c, next) => {
 });
 
 app.post("/api/chat", async (c) => {
+	const user = c.get("user");
+
+	if (!user) {
+		return c.text("Unauthorized", 401);
+	}
+
 	const body = await c.req.json();
 	const uiMessages = body.messages || [];
 	console.log("Received messages:", JSON.stringify(uiMessages, null, 2));
