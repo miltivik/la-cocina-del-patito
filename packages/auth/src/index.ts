@@ -55,8 +55,10 @@ export const auth = betterAuth<BetterAuthOptions>({
 	advanced: {
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// sameSite "lax" funciona para OAuth redirects (navegación top-level)
-			sameSite: "lax",
+			// IMPORTANTE: Para cross-site (frontend y backend en diferentes dominios)
+			// se requiere sameSite: "none" + secure: true
+			// En desarrollo usamos "lax" porque es localhost
+			sameSite: isProduction ? "none" : "lax",
 			secure: isProduction,
 			httpOnly: true,
 			path: "/",
