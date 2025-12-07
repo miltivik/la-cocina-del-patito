@@ -39,6 +39,9 @@
     "@aws-sdk/client-s3": "^3.937.0",
     "@aws-sdk/lib-storage": "^3.937.0",
     "dotenv": "^17.2.2",
+    "next": "16.0.7",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
     "sharp": "^0.34.5",
     "zod": "^4.1.11"
   },
