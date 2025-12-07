@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { Response } from "@/components/response";
 import { useEffect, useRef, useState } from "react";
 import { PromptInputBox } from "@/components/ui/ai-prompt-box";
@@ -12,7 +13,9 @@ import { toast } from "sonner";
 
 export default function AIPage() {
 	const { messages, sendMessage, stop } = useChat({
-		api: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chat`,
+		transport: new DefaultChatTransport({
+			api: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chat`,
+		}),
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [saveDialogOpen, setSaveDialogOpen] = useState(false);
