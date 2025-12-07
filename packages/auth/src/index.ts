@@ -9,8 +9,6 @@ const isProduction =
 	process.env.VERCEL_ENV === "preview" ||
 	process.env.NODE_ENV === "production";
 
-// URL base del servidor (para callbacks de OAuth)
-// IMPORTANTE: En producción SIEMPRE usar BETTER_AUTH_URL (alias estable)
 // para evitar state_mismatch por inconsistencia de dominios de cookies
 const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3001";
 
