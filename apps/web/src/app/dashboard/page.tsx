@@ -27,8 +27,8 @@ export default function DashboardPage() {
 			toast.success("¡Receta guardada exitosamente!");
 			setSaveDialogOpen(false);
 			setRecipeToSave(null);
-			// Refrescar la lista de recetas guardadas
-			queryClient.invalidateQueries({ queryKey: ['savedRecipes', 'list'] });
+			// Refrescar todas las listas de recetas
+			queryClient.invalidateQueries({ queryKey: ['savedRecipes'] });
 		},
 		onError: (error: Error) => {
 			toast.error(`Error al guardar: ${error.message}`);

@@ -70,7 +70,7 @@ export function SignInForm({
 	}
 
 	return (
-		<div className="flex items-center justify-center bg-background px-4">
+		<div className="min-h-screen flex items-center justify-center bg-background px-4">
 			<div className="w-full max-w-md">
 				<h1 className="mb-6 text-center text-3xl font-bold">Bienvenida Princesa</h1>
 
@@ -251,7 +251,7 @@ export function SignUpForm({
 	}
 
 	return (
-		<div className="flex items-center justify-center bg-background px-4">
+		<div className="min-h-screen flex items-center justify-center bg-background px-4">
 			<div className="w-full max-w-md">
 				<h1 className="mb-6 text-center text-3xl font-bold">Crear Cuenta</h1>
 

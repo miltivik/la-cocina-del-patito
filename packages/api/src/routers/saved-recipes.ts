@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../procedures";
-import { db, savedRecipe, eq, and, desc } from "@la-cocina-del-patito/db";
+import { db, savedRecipe, user, eq, and, desc } from "@la-cocina-del-patito/db";
 
 export const savedRecipesRouter = {
     create: protectedProcedure
@@ -9,6 +9,7 @@ export const savedRecipesRouter = {
                 title: z.string(),
                 content: z.any(), // Using any for JSON content, or could be specific schema
                 imageUrl: z.string().url().optional(),
+                isPublic: z.boolean().optional().default(false),
             }),
         )
         .handler(async ({ input, context }) => {
@@ -19,6 +20,7 @@ export const savedRecipesRouter = {
                     title: input.title,
                     content: input.content,
                     imageUrl: input.imageUrl || "https://images.unsplash.com/photo-1495521821757-a1efb0d6f87a?w=400&h=300&fit=crop",
+                    isPublic: input.isPublic,
                 })
                 .returning();
             return recipe;
@@ -31,6 +33,73 @@ export const savedRecipesRouter = {
             .where(eq(savedRecipe.userId, context.session.user.id))
             .orderBy(desc(savedRecipe.createdAt));
     }),
+
+    // List all public recipes from all users (for community/recommended section)
+    listPublic: publicProcedure
+        .input(
+            z.object({
+                limit: z.number().min(1).max(50).optional().default(20),
+                offset: z.number().min(0).optional().default(0),
+            }).optional(),
+        )
+        .handler(async ({ input }) => {
+            const limit = input?.limit ?? 20;
+            const offset = input?.offset ?? 0;
+
+            const recipes = await db
+                .select({
+                    id: savedRecipe.id,
+                    title: savedRecipe.title,
+                    content: savedRecipe.content,
+                    imageUrl: savedRecipe.imageUrl,
+                    isPublic: savedRecipe.isPublic,
+                    createdAt: savedRecipe.createdAt,
+                    updatedAt: savedRecipe.updatedAt,
+                    userId: savedRecipe.userId,
+                    authorName: user.name,
+                    authorImage: user.image,
+                })
+                .from(savedRecipe)
+                .leftJoin(user, eq(savedRecipe.userId, user.id))
+                .where(eq(savedRecipe.isPublic, true))
+                .orderBy(desc(savedRecipe.createdAt))
+                .limit(limit)
+                .offset(offset);
+
+            return recipes;
+        }),
+
+    // List recent public recipes (for trending section)
+    listRecent: publicProcedure
+        .input(
+            z.object({
+                limit: z.number().min(1).max(20).optional().default(10),
+            }).optional(),
+        )
+        .handler(async ({ input }) => {
+            const limit = input?.limit ?? 10;
+
+            const recipes = await db
+                .select({
+                    id: savedRecipe.id,
+                    title: savedRecipe.title,
+                    content: savedRecipe.content,
+                    imageUrl: savedRecipe.imageUrl,
+                    isPublic: savedRecipe.isPublic,
+                    createdAt: savedRecipe.createdAt,
+                    updatedAt: savedRecipe.updatedAt,
+                    userId: savedRecipe.userId,
+                    authorName: user.name,
+                    authorImage: user.image,
+                })
+                .from(savedRecipe)
+                .leftJoin(user, eq(savedRecipe.userId, user.id))
+                .where(eq(savedRecipe.isPublic, true))
+                .orderBy(desc(savedRecipe.createdAt))
+                .limit(limit);
+
+            return recipes;
+        }),
 
     update: protectedProcedure
         .input(
@@ -96,3 +165,4 @@ export const savedRecipesRouter = {
             throw new Error("Unauthorized");
         }),
 };
+

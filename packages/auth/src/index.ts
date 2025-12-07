@@ -55,14 +55,15 @@ export const auth = betterAuth<BetterAuthOptions>({
 	advanced: {
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// IMPORTANTE: Para cross-site (frontend y backend en diferentes dominios)
-			// se requiere sameSite: "none" + secure: true
-			// En desarrollo usamos "lax" porque es localhost
-			sameSite: isProduction ? "none" : "lax",
+			// OAuth callback es navegación top-level al mismo dominio del servidor
+			// sameSite: "lax" debería funcionar para esto
+			sameSite: "lax",
 			secure: isProduction,
 			httpOnly: true,
 			path: "/",
 			maxAge: 60 * 60 * 24 * 7, // 7 días
+			// Nuevo estándar de navegadores para cookies de terceros
+			partitioned: isProduction,
 		},
 		// Solo deshabilitar CSRF en desarrollo para simplificar testing
 		disableCSRFCheck: !isProduction,

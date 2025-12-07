@@ -1,10 +1,12 @@
 "use client";
 
 import { RecipeCard } from "./recipe-card";
-import { trendingRecipes, filterRecipes, searchRecipes, type Recipe } from "@/lib/mock-recipes";
+import { filterRecipes, searchRecipes, type Recipe } from "@/lib/mock-recipes";
 import type { FilterOption } from "./filter-chips";
-import { UtensilsCrossed } from "lucide-react";
+import { UtensilsCrossed, Loader2, TrendingUp } from "lucide-react";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "@/utils/orpc";
 
 interface TrendingRecipesProps {
     activeFilter: FilterOption;
@@ -13,21 +15,63 @@ interface TrendingRecipesProps {
 }
 
 export function TrendingRecipes({ activeFilter, searchQuery, onSaveRecipe }: TrendingRecipesProps) {
-    // Aplicar filtros y búsqueda
-    const filteredRecipes = useMemo(() => {
-        // Primero aplicar filtro por categoría/tipo
-        let result = filterRecipes(trendingRecipes, activeFilter);
+    // Fetch recent public recipes from API
+    const { data: apiRecipes, isLoading, error } = useQuery({
+        queryKey: ['savedRecipes', 'listRecent'],
+        queryFn: () => client.savedRecipes.listRecent({ limit: 10 }),
+    });
 
-        // Luego aplicar búsqueda
+    // Transform API recipes to match Recipe type and apply filters
+    const filteredRecipes = useMemo(() => {
+        if (!apiRecipes || apiRecipes.length === 0) return [];
+
+        // Transform API response to Recipe format
+        const recipes: Recipe[] = apiRecipes.map((r) => ({
+            id: r.id,
+            title: r.title,
+            imageUrl: r.imageUrl || "https://images.unsplash.com/photo-1495521821757-a1efb0d6f87a?w=400&h=300&fit=crop",
+            cookTime: (r.content as any)?.cookTime || 30,
+            calories: (r.content as any)?.calories || 400,
+            difficulty: (r.content as any)?.difficulty || "Media",
+            category: (r.content as any)?.category || "Cena",
+            tags: (r.content as any)?.tags || [],
+            description: (r.content as any)?.description || "",
+            contextLabel: r.authorName ? `Por ${r.authorName}` : "Reciente",
+        }));
+
+        // Apply category filter
+        let result = filterRecipes(recipes, activeFilter);
+
+        // Apply search
         result = searchRecipes(result, searchQuery);
 
         return result;
-    }, [activeFilter, searchQuery]);
+    }, [apiRecipes, activeFilter, searchQuery]);
+
+    if (isLoading) {
+        return (
+            <section className="mb-12">
+                <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] mb-6 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-primary" />
+                    Recetas Recientes
+                </h2>
+                <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+            </section>
+        );
+    }
+
+    // Don't show section if no recent recipes
+    if (!apiRecipes || apiRecipes.length === 0) {
+        return null;
+    }
 
     return (
         <section className="mb-12">
-            <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] mb-6">
-                Recetas en Tendencia
+            <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] mb-6 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Recetas Recientes
             </h2>
 
             {filteredRecipes.length === 0 ? (
@@ -55,3 +99,4 @@ export function TrendingRecipes({ activeFilter, searchQuery, onSaveRecipe }: Tre
         </section>
     );
 }
+

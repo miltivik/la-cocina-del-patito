@@ -11,7 +11,9 @@ import { client } from "@/utils/orpc";
 import { toast } from "sonner";
 
 export default function AIPage() {
-	const { messages, sendMessage, stop } = useChat();
+	const { messages, sendMessage, stop } = useChat({
+		api: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chat`,
+	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [saveDialogOpen, setSaveDialogOpen] = useState(false);
 	const [messageToSave, setMessageToSave] = useState<any>(null);
