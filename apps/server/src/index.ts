@@ -158,6 +158,25 @@ app.use(
 	}),
 );
 
+// Middleware de debugging para OAuth - muestra las cookies que llegan
+app.use("/api/auth/*", async (c, next) => {
+	const url = new URL(c.req.url);
+	const cookies = c.req.header("cookie") || "";
+
+	// Log detallado para callbacks de OAuth
+	if (url.pathname.includes("/callback/")) {
+		console.log("🔍 OAuth Callback Debug:", {
+			path: url.pathname,
+			state: url.searchParams.get("state"),
+			cookieHeader: cookies,
+			hasBetterAuthState: cookies.includes("better-auth.state"),
+			allHeaders: Object.fromEntries(c.req.raw.headers.entries()),
+		});
+	}
+
+	await next();
+});
+
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 export const apiHandler = new OpenAPIHandler(appRouter, {
