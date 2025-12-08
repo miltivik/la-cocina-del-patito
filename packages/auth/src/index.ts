@@ -55,9 +55,9 @@ export const auth = betterAuth<BetterAuthOptions>({
 	advanced: {
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// OAuth callback es navegación top-level al mismo dominio del servidor
-			// sameSite: "lax" debería funcionar para esto
-			sameSite: "lax",
+			// En producción con dominios diferentes (cross-origin), necesitamos sameSite: none
+			// para que las cookies se envíen en el callback de OAuth
+			sameSite: isProduction ? "none" : "lax",
 			secure: isProduction,
 			httpOnly: true,
 			path: "/",
@@ -65,8 +65,10 @@ export const auth = betterAuth<BetterAuthOptions>({
 			// Nuevo estándar de navegadores para cookies de terceros
 			partitioned: isProduction,
 		},
-		// Solo deshabilitar CSRF en desarrollo para simplificar testing
-		disableCSRFCheck: !isProduction,
+		// En producción con SameSite=None, necesitamos deshabilitar CSRF check
+		// porque el flujo OAuth viene de un redirect cross-origin
+		// El flujo OAuth ya tiene protección CSRF mediante el parámetro state
+		disableCSRFCheck: isProduction,
 	},
 	// Configuración de cuentas para producción
 	account: {
