@@ -163,6 +163,15 @@ app.use("/api/auth/*", async (c, next) => {
 	const url = new URL(c.req.url);
 	const cookies = c.req.header("cookie") || "";
 
+	// Log detallado para signin (inicio del flujo OAuth)
+	if (url.pathname.includes("/signin/google") || url.pathname.includes("/sign-in/social")) {
+		console.log("🚀 OAuth Flow START:", {
+			path: url.pathname,
+			query: Object.fromEntries(url.searchParams),
+			existingCookies: cookies,
+		});
+	}
+
 	// Log detallado para callbacks de OAuth
 	if (url.pathname.includes("/callback/")) {
 		console.log("🔍 OAuth Callback Debug:", {
