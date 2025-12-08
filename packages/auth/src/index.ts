@@ -38,6 +38,8 @@ export const auth = betterAuth<BetterAuthOptions>({
 		frontendURL,
 		// URL del frontend en producción
 		"https://la-cocina-del-patito-web.vercel.app",
+		// Wildcard para preview deployments de Vercel (frontend)
+		"https://*.vercel.app",
 		// URL del servidor (baseURL)
 		baseURL,
 	].filter(Boolean),
@@ -55,19 +57,13 @@ export const auth = betterAuth<BetterAuthOptions>({
 	advanced: {
 		useSecureCookies: isProduction,
 		defaultCookieAttributes: {
-			// En producción con dominios diferentes (cross-origin), necesitamos sameSite: none
-			// para que las cookies se envíen en el callback de OAuth
-			sameSite: isProduction ? "none" : "lax",
+			sameSite: "lax",
 			secure: isProduction,
 			httpOnly: true,
 			path: "/",
 			maxAge: 60 * 60 * 24 * 7, // 7 días
-			// Nuevo estándar de navegadores para cookies de terceros
-			partitioned: isProduction,
 		},
-		// En producción con SameSite=None, necesitamos deshabilitar CSRF check
-		// porque el flujo OAuth viene de un redirect cross-origin
-		// El flujo OAuth ya tiene protección CSRF mediante el parámetro state
+		// Deshabilitar CSRF check ya que OAuth usa el parámetro state para protección
 		disableCSRFCheck: isProduction,
 	},
 	// Configuración de cuentas para producción
