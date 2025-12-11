@@ -70,6 +70,13 @@ export const auth = betterAuth<BetterAuthOptions>({
 	account: {
 		// Encriptar tokens OAuth para mayor seguridad
 		encryptOAuthTokens: true,
+		// WORKAROUND: Saltar verificación de cookie de state para dominios .vercel.app
+		// Los subdominios de .vercel.app son tratados como "public suffix" por navegadores,
+		// lo que impide que las cookies funcionen correctamente entre el frontend y backend.
+		// Ref: https://www.better-auth.com/docs/errors/state_mismatch
+		// NOTA: Para producción real, usar un dominio personalizado es la solución recomendada.
+		// @ts-expect-error - Esta opción existe en la documentación pero puede faltar en las definiciones de tipos
+		skipStateCookieCheck: isProduction,
 		// Habilitar linking de cuentas entre proveedores
 		accountLinking: {
 			enabled: true,
